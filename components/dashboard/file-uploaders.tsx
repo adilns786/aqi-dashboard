@@ -49,32 +49,32 @@ export function ModelUploader({ onModelUpload, modelLoaded, modelName, onRemoveM
   }, [onModelUpload]);
 
   return (
-    <Card className="border-0 shadow-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <Card className="border shadow-lg bg-white">
       <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
+        <CardTitle className="text-slate-900 flex items-center gap-2">
           <FileUp className="w-5 h-5" />
           Model File
         </CardTitle>
-        <CardDescription className="text-slate-400">
+        <CardDescription className="text-slate-600">
           Upload or use default AQI prediction model
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {modelLoaded && modelName ? (
-          <div className="p-4 rounded-lg bg-green-900/20 border border-green-800">
+          <div className="p-4 rounded-lg bg-green-50 border border-green-300">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-green-300">Model Loaded</p>
-                  <p className="text-xs text-green-200 mt-1">{modelName}</p>
+                  <p className="text-sm font-medium text-green-900">Model Loaded</p>
+                  <p className="text-xs text-green-800 mt-1">{modelName}</p>
                 </div>
               </div>
               <Button
                 onClick={onRemoveModel}
                 size="sm"
                 variant="ghost"
-                className="text-green-400 hover:text-green-300"
+                className="text-green-600 hover:text-green-700"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
@@ -93,17 +93,17 @@ export function ModelUploader({ onModelUpload, modelLoaded, modelName, onRemoveM
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={loading}
-              className="w-full p-6 rounded-lg border-2 border-dashed border-slate-600 hover:border-purple-500 hover:bg-purple-900/10 transition-colors disabled:opacity-50"
+              className="w-full p-6 rounded-lg border-2 border-dashed border-slate-300 hover:border-purple-500 hover:bg-purple-50 transition-colors disabled:opacity-50"
             >
               {loading ? (
                 <div className="flex flex-col items-center gap-2">
                   <Spinner className="w-6 h-6" />
-                  <span className="text-sm text-slate-400">Uploading...</span>
+                  <span className="text-sm text-slate-500">Uploading...</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-2">
-                  <Upload className="w-6 h-6 text-slate-400" />
-                  <span className="text-sm font-medium text-slate-300">
+                  <Upload className="w-6 h-6 text-slate-600" />
+                  <span className="text-sm font-medium text-slate-700">
                     Click to upload or drag and drop
                   </span>
                   <span className="text-xs text-slate-500">
@@ -114,13 +114,13 @@ export function ModelUploader({ onModelUpload, modelLoaded, modelName, onRemoveM
             </button>
 
             {error && (
-              <div className="p-3 rounded-lg bg-red-900/20 border border-red-800 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-400 mt-0.5" />
-                <p className="text-sm text-red-200">{error}</p>
+              <div className="p-3 rounded-lg bg-red-50 border border-red-300 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                <p className="text-sm text-red-800">{error}</p>
               </div>
             )}
 
-            <p className="text-xs text-slate-500 text-center">
+            <p className="text-xs text-slate-600 text-center">
               Using default model: aqi_model.pkl
             </p>
           </>
@@ -160,13 +160,13 @@ export function DatasetUploader({ onDatasetUpload, loading, error }: DatasetUplo
   }, [onDatasetUpload]);
 
   return (
-    <Card className="border-0 shadow-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <Card className="border shadow-lg bg-white">
       <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
+        <CardTitle className="text-slate-900 flex items-center gap-2">
           <FileUp className="w-5 h-5" />
           Dataset Analysis
         </CardTitle>
-        <CardDescription className="text-slate-400">
+        <CardDescription className="text-slate-600">
           Upload CSV file for statistical analysis
         </CardDescription>
       </CardHeader>
@@ -182,17 +182,17 @@ export function DatasetUploader({ onDatasetUpload, loading, error }: DatasetUplo
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={loading}
-          className="w-full p-6 rounded-lg border-2 border-dashed border-slate-600 hover:border-blue-500 hover:bg-blue-900/10 transition-colors disabled:opacity-50"
+          className="w-full p-6 rounded-lg border-2 border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50 transition-colors disabled:opacity-50"
         >
           {loading ? (
             <div className="flex flex-col items-center gap-2">
               <Spinner className="w-6 h-6" />
-              <span className="text-sm text-slate-400">Analyzing...</span>
+              <span className="text-sm text-slate-500">Analyzing...</span>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2">
-              <Upload className="w-6 h-6 text-slate-400" />
-              <span className="text-sm font-medium text-slate-300">
+              <Upload className="w-6 h-6 text-slate-600" />
+              <span className="text-sm font-medium text-slate-700">
                 Click to upload dataset
               </span>
               <span className="text-xs text-slate-500">
@@ -203,9 +203,9 @@ export function DatasetUploader({ onDatasetUpload, loading, error }: DatasetUplo
         </button>
 
         {(error || localError) && (
-          <div className="p-3 rounded-lg bg-red-900/20 border border-red-800 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-400 mt-0.5" />
-            <p className="text-sm text-red-200">{error || localError}</p>
+          <div className="p-3 rounded-lg bg-red-50 border border-red-300 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+            <p className="text-sm text-red-800">{error || localError}</p>
           </div>
         )}
       </CardContent>
