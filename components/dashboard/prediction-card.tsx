@@ -33,18 +33,18 @@ export function PredictionCard({ aqi, bucket, loading, error }: PredictionCardPr
       return (
         <div className="flex flex-col items-center justify-center py-8">
           <Spinner className="w-8 h-8 mb-4" />
-          <p className="text-sm text-slate-400">Predicting AQI...</p>
+          <p className="text-sm text-slate-500">Predicting AQI...</p>
         </div>
       );
     }
 
     if (error) {
       return (
-        <div className="flex items-start gap-3 p-4 rounded-lg bg-red-900/20 border border-red-800">
-          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 rounded-lg bg-red-50 border border-red-300">
+          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-red-300">Prediction Error</p>
-            <p className="text-xs text-red-200 mt-1">{error}</p>
+            <p className="text-sm font-medium text-red-900">Prediction Error</p>
+            <p className="text-xs text-red-700 mt-1">{error}</p>
           </div>
         </div>
       );
@@ -53,7 +53,7 @@ export function PredictionCard({ aqi, bucket, loading, error }: PredictionCardPr
     if (aqi === null || bucket === null) {
       return (
         <div className="flex items-center justify-center py-8">
-          <p className="text-sm text-slate-400">Load model and adjust parameters to predict</p>
+          <p className="text-sm text-slate-500">Load model and adjust parameters to predict</p>
         </div>
       );
     }
@@ -68,15 +68,15 @@ export function PredictionCard({ aqi, bucket, loading, error }: PredictionCardPr
             <div
               className="relative w-32 h-32 rounded-full flex items-center justify-center"
               style={{
-                background: `linear-gradient(135deg, ${bucketInfo?.color}20, ${bucketInfo?.color}40)`,
+                background: `linear-gradient(135deg, ${bucketInfo?.color}15, ${bucketInfo?.color}30)`,
                 border: `3px solid ${bucketInfo?.color}`
               }}
             >
               <div className="text-center">
                 <div className="text-4xl font-bold" style={{ color: bucketInfo?.color }}>
-                  {formatAQI(aqi)}
+                  {typeof aqi === 'number' ? formatAQI(aqi) : 'N/A'}
                 </div>
-                <div className="text-xs text-slate-400 mt-1">AQI Value</div>
+                <div className="text-xs text-slate-500 mt-1">AQI Value</div>
               </div>
             </div>
           </div>
@@ -89,20 +89,20 @@ export function PredictionCard({ aqi, bucket, loading, error }: PredictionCardPr
               color: bucketInfo?.textColor
             }}
           >
-            {bucket}
+            {bucket || 'Unknown'}
           </div>
         </div>
 
         {/* Description */}
         <div className="space-y-2 text-center">
-          <p className="text-sm text-slate-300">
-            {getAQIDescription(aqi)}
+          <p className="text-sm text-slate-700">
+            {typeof aqi === 'number' ? getAQIDescription(aqi) : 'Waiting for prediction'}
           </p>
-          <div className="flex items-center justify-center gap-1 text-xs text-slate-400">
+          <div className="flex items-center justify-center gap-1 text-xs text-slate-600">
             {isGood ? (
-              <><CheckCircle className="w-4 h-4 text-green-400" /> Good conditions</>
+              <><CheckCircle className="w-4 h-4 text-green-600" /> Good conditions</>
             ) : (
-              <><TrendingUp className="w-4 h-4 text-orange-400" /> Caution advised</>
+              <><TrendingUp className="w-4 h-4 text-orange-600" /> Caution advised</>
             )}
           </div>
         </div>
@@ -118,23 +118,23 @@ export function PredictionCard({ aqi, bucket, loading, error }: PredictionCardPr
             Recommendation:
           </p>
           <p style={{ color: bucketInfo?.textColor }}>
-            {getAQIRecommendation(aqi)}
+            {typeof aqi === 'number' ? getAQIRecommendation(aqi) : 'No recommendation available'}
           </p>
         </div>
 
         {/* Range Info */}
-        <div className="text-xs text-slate-500 text-center">
-          AQI {bucketInfo?.min} - {bucketInfo?.max} ({bucket})
+        <div className="text-xs text-slate-600 text-center">
+          {bucketInfo ? `AQI ${bucketInfo.min} - ${bucketInfo.max} (${bucket})` : 'No range data'}
         </div>
       </div>
     );
   };
 
   return (
-    <Card className="border-0 shadow-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 sticky top-4">
+    <Card className="border shadow-lg bg-white sticky top-4">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg text-white">AQI Prediction</CardTitle>
-        <CardDescription className="text-slate-400">
+        <CardTitle className="text-lg text-slate-900">AQI Prediction</CardTitle>
+        <CardDescription className="text-slate-600">
           Real-time air quality forecast
         </CardDescription>
       </CardHeader>
