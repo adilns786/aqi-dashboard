@@ -24,13 +24,14 @@ export function DatasetAnalysis({ data, loading }: DatasetAnalysisProps) {
 
   const statisticsData = useMemo(() => {
     return Object.entries(data.statistics)
+      .filter(([_, stats]: [string, any]) => stats.type === 'numeric')
       .slice(0, 8)
       .map(([col, stats]: [string, any]) => ({
         name: col,
-        mean: stats.mean,
-        std: stats.std,
-        min: stats.min,
-        max: stats.max
+        mean: stats.mean || 0,
+        std: stats.std || 0,
+        min: stats.min || 0,
+        max: stats.max || 0
       }));
   }, [data.statistics]);
 
@@ -95,14 +96,15 @@ export function DatasetAnalysis({ data, loading }: DatasetAnalysisProps) {
                   </TableHeader>
                   <TableBody>
                     {Object.entries(data.statistics)
+                      .filter(([_, stats]: [string, any]) => stats.type === 'numeric')
                       .slice(0, 12)
                       .map(([feature, stats]: [string, any]) => (
                         <TableRow key={feature} className="border-slate-700 hover:bg-slate-800/50">
                           <TableCell className="font-medium text-slate-300">{feature}</TableCell>
-                          <TableCell className="text-right text-slate-400">{stats.mean.toFixed(2)}</TableCell>
-                          <TableCell className="text-right text-slate-400">{stats.std.toFixed(2)}</TableCell>
-                          <TableCell className="text-right text-slate-400">{stats.min.toFixed(2)}</TableCell>
-                          <TableCell className="text-right text-slate-400">{stats.max.toFixed(2)}</TableCell>
+                          <TableCell className="text-right text-slate-400">{stats.mean?.toFixed(2) || 'N/A'}</TableCell>
+                          <TableCell className="text-right text-slate-400">{stats.std?.toFixed(2) || 'N/A'}</TableCell>
+                          <TableCell className="text-right text-slate-400">{stats.min?.toFixed(2) || 'N/A'}</TableCell>
+                          <TableCell className="text-right text-slate-400">{stats.max?.toFixed(2) || 'N/A'}</TableCell>
                         </TableRow>
                       ))}
                   </TableBody>
