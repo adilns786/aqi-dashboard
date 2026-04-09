@@ -1,9 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import * as path from 'path';
-
-const execPromise = promisify(exec);
 
 interface AnalysisResponse {
   success?: boolean;
@@ -13,6 +8,67 @@ interface AnalysisResponse {
   preview?: any[];
   statistics?: Record<string, any>;
   error?: string;
+}
+
+function parseCSV(csvData: string): { columns: string[]; rows: any[] } {
+  const lines = csvData.trim().split('\n');
+  if (lines.length === 0) {
+    throw new Error('Empty CSV file');
+  }
+
+  // Parse header
+  const columns = lines[0].split(',').map((col) => col.trim());
+
+  // Parse rows
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map((val) => val.trim());
+    const row: Record<string, any> = {};
+    for (let j = 0; j < columns.length && j < values.length; j++) {
+      const numVal = parseFloat(values[j]);
+      row[columns[j]] = isNaN(numVal) ? values[j] : numVal;
+    }
+    rows.push(row);
+  }
+
+  return { columns, rows };
+}
+
+function calculateStatistics(
+  rows: any[],
+  columns: string[]
+): Record<string, any> {
+  const stats: Record<string, any> = {};
+
+  for (const col of columns) {
+    const values = rows
+      .map((row) => row[col])
+      .filter((v) => typeof v === 'number');
+
+    if (values.length === 0) {
+      stats[col] = { type: 'non-numeric' };
+      continue;
+    }
+
+    const sorted = [...values].sort((a, b) => a - b);
+    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+    const variance =
+      values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /
+      values.length;
+    const std = Math.sqrt(variance);
+
+    stats[col] = {
+      type: 'numeric',
+      count: values.length,
+      mean: Math.round(mean * 100) / 100,
+      std: Math.round(std * 100) / 100,
+      min: Math.round(sorted[0] * 100) / 100,
+      max: Math.round(sorted[sorted.length - 1] * 100) / 100,
+      median: Math.round(sorted[Math.floor(sorted.length / 2)] * 100) / 100,
+    };
+  }
+
+  return stats;
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<AnalysisResponse>> {
@@ -46,31 +102,27 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalysisR
       );
     }
 
-    // Call Python script for analysis
-    const scriptPath = path.join(process.cwd(), 'scripts', 'model_handler.py');
+    // Parse CSV
+    const { columns, rows } = parseCSV(csvData);
 
-    try {
-      const { stdout, stderr } = await execPromise(
-        `python3 "${scriptPath}" analyze '${csvData.replace(/'/g, "'\\''")}'`
-      );
+    // Get preview (first 40 rows)
+    const preview = rows.slice(0, 40);
 
-      if (stderr) {
-        console.error('[Dataset Analysis] Python stderr:', stderr);
-      }
+    // Calculate statistics
+    const statistics = calculateStatistics(rows, columns);
 
-      const result = JSON.parse(stdout);
-      return NextResponse.json(result);
-    } catch (execError: any) {
-      console.error('[Dataset Analysis] Execution error:', execError.message);
-      return NextResponse.json(
-        { error: `Analysis failed: ${execError.message}` },
-        { status: 500 }
-      );
-    }
-  } catch (error) {
+    return NextResponse.json({
+      success: true,
+      total_rows: rows.length,
+      columns,
+      num_columns: columns.length,
+      preview,
+      statistics,
+    });
+  } catch (error: any) {
     console.error('[Dataset Analysis] Error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error.message || 'Internal server error' },
       { status: 500 }
     );
   }
